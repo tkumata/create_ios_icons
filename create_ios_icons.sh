@@ -35,7 +35,7 @@ else
 fi
 
 if [ $JOB_COND = 'OK' ]; then
-    # Check width and height and image format
+    # Input width and height and image format into $a
     a=`sips -g all "${BASE_FILE}" | sed -n '/format: /p;/pixelHeight: /p;/pixelWidth: /p' | cut -d':' -f2`
     END=0
     
@@ -51,6 +51,7 @@ if [ $JOB_COND = 'OK' ]; then
         END=`expr $END + 1`
     done
 
+    # Check long side
     if [ $iw -gt $ih ]; then
         s=$iw
     else
@@ -59,6 +60,7 @@ if [ $JOB_COND = 'OK' ]; then
 
     echo "Long side: $s"
     echo "Format: $f"
+    
     if [ $s -gt 1023 ]; then
         if [ $f = "png" ]; then
             # create output directory
@@ -73,7 +75,7 @@ if [ $JOB_COND = 'OK' ]; then
             exit 1
         fi
     else
-        echo "Long side is ${s}px.\nImage resolution is not enough. So please ready 1024x1024 picture."
+        echo "Long side is ${s}px.\nImage resolution is not enough. So please ready 1024px picture."
         exit 1
     fi
 
