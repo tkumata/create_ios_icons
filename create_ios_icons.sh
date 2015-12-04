@@ -34,14 +34,6 @@ else
 	TMP_FILE_PREFIX="kmt_xcode_icons"
 fi
 
-# Check image size
-#((0
-#	`sips -g all "${BASE_FILE}" | sed -n '/pixelHeight:/s//,ih=/p;/pixelWidth:/s//,iw=/p'`
-#	,s=iw>ih?iw:ih
-#))
-# check image format
-#f=`sips -g format "$BASE_FILE" | tail -1 | awk -F" " '{printf("%s\n", $2)}'`
-
 if [ $JOB_COND = 'OK' ]; then
     # Check width and height and image format
     a=`sips -g all "${BASE_FILE}" | sed -n '/format: /p;/pixelHeight: /p;/pixelWidth: /p' | cut -d':' -f2`
