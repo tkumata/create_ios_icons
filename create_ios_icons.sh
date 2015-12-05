@@ -7,6 +7,7 @@ JOB_COND="NO"
 reqv="10.4.4"
 ver=`sips -h | head -1 | awk '{print $2}'`
 
+# sips version check
 if [ $ver != $reqv ]; then
 	echo "sips version is $ver. requier $reqv."
 	exit 1
