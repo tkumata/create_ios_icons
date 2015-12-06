@@ -15,15 +15,15 @@ fi
 
 # Check argument
 if [ $# -ne 1 ]; then
-	echo "Not found argument."
-	echo "Usage: /path/to/this_script image_file.png"
-	echo "Image file name should not have space character."
-	exit 1
+    echo "Argument error."
+    echo "Usage: sh /path/to/this_script image_file.png"
+    echo "Please do not use space for file name."
+    exit 1
 else
 	# Image file name
 	BASE_FILE=$1
     
-	if [ -f $BASE_FILE ]; then
+	if [ -e $BASE_FILE ]; then
         echo "OK. File exists."
 		JOB_COND="OK"
     else
@@ -66,7 +66,7 @@ if [ $JOB_COND = 'OK' ]; then
         if [ $f = "png" ]; then
             # create output directory
             outdir="create_ios_icons"
-            mkdir -p $outdir
+            mkdir -p ${outdir} 2>/dev/null
 
             # create parent file
             sips -Z 1024 "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_1024x1024.png
@@ -85,11 +85,11 @@ if [ $JOB_COND = 'OK' ]; then
     # Icon Resolution
     resolutions="180/-60@3x 152/-76@2x 144/-72@2x 120/-60@2x 114/@2x 100/-Small-50@2x 87/-Small@3x 80/-Small-40@2x 76/-76 72/-72 57/ 58/-Small@2x 50/-Small-50 40/-Small-40 29/-Small"
 
-    # App Icons
-    for a in $resolutions
+    # Create App icons
+    for a in ${resolutions}
     do
-        res=`echo $a | cut -d'/' -f1`
-        nameofpart=`echo $a | cut -d'/' -f2`
+        res=`echo ${a} | cut -d'/' -f1`
+        nameofpart=`echo ${a} | cut -d'/' -f2`
         
         if [ -e "/tmp/${TMP_FILE_PREFIX}_${res}x${res}.png" ]; then
             echo "Already exist ${TMP_FILE_PREFIX}_${res}x${res}.png."
@@ -99,6 +99,6 @@ if [ $JOB_COND = 'OK' ]; then
         fi
     done
 
-    # delete cache files
+    # Delete temporary files
     rm -v /tmp/${TMP_FILE_PREFIX}_*
 fi
