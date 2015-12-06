@@ -37,7 +37,7 @@ sips version 10.4.4
 $ sh create_ios_icons.sh image_file.png
 ```
 
-## Future plan
+## Plan
 
 - 変換後のファイルを任意の場所へ保存できるようにしたい。
 - 画像形式の種類を増やしたい。
