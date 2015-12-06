@@ -99,26 +99,6 @@ if [ $JOB_COND = 'OK' ]; then
         fi
     done
 
-    # App icons
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_144x144.png" "${outdir}/Icon-72@2x.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_72x72.png" "${outdir}/Icon-72.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_114x114.png" "${outdir}/Icon@2x.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_57x57.png" "${outdir}/Icon.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_120x120.png" "${outdir}/Icon-60@2x.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_152x152.png" "${outdir}/Icon-76@2x.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_76x76.png" "${outdir}/Icon-76.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_180x180.png" "${outdir}/Icon-60@3x.png"
-
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_100x100.png" "${outdir}/Icon-Small-50@2x.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_50x50.png" "${outdir}/Icon-Small-50.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_58x58.png" "${outdir}/Icon-Small@2x.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_29x29.png" "${outdir}/Icon-Small.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_80x80.png" "${outdir}/Icon-Small-40@2x.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_40x40.png" "${outdir}/Icon-Small-40.png"
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_120x120.png" "${outdir}/Icon-Small-40@3x.png"
-
-    #cp -vf "/tmp/${TMP_FILE_PREFIX}_87x87.png" "${outdir}/Icon-Small@3x.png"
-
     # delete cache files
     rm -v /tmp/${TMP_FILE_PREFIX}_*
 fi
