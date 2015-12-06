@@ -1,41 +1,35 @@
 #!/bin/sh
+#
+# The MIT License (MIT)
+#
+# Copyright (c) 2015 Tomokatsu Kumata.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
 
-# Init
-JOB_COND="NO"
+# Init vars
+REQVER="10.4.4"
+VER=`sips -h | head -1 | awk '{print $2}'`
+TMP_FILE_PREFIX="kmt_xcode_icons" # Prefix temporary file
 
-# Check version of sips command
-reqv="10.4.4"
-ver=`sips -h | head -1 | awk '{print $2}'`
-
-# sips version check
-if [ $ver != $reqv ]; then
-	echo "sips version is $ver. requier $reqv."
-	exit 1
-fi
-
-# Check argument
-if [ $# -ne 1 ]; then
-    echo "Argument error."
-    echo "Usage: sh /path/to/this_script image_file.png"
-    echo "Please do not use space for file name."
-    exit 1
-else
-	# Image file name
-	BASE_FILE=$1
-    
-	if [ -e $BASE_FILE ]; then
-        echo "OK. File exists."
-		JOB_COND="OK"
-    else
-        echo "File not exists."
-		exit 1
-	fi
-    
-	# Prefix temporary file
-	TMP_FILE_PREFIX="kmt_xcode_icons"
-fi
-
-if [ $JOB_COND = 'OK' ]; then
+create_app_icons()
+{
     # Input width and height and image format into $a
     imginfo=`sips -g all "${BASE_FILE}" | sed -n '/format: /p;/pixelHeight: /p;/pixelWidth: /p' | cut -d':' -f2`
     END=0
@@ -71,8 +65,8 @@ if [ $JOB_COND = 'OK' ]; then
             # create parent file
             sips -Z 1024 "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_1024x1024.png
             sips -Z 512 "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_512x512.png
-            cp -vf "/tmp/${TMP_FILE_PREFIX}_1024x1024.png" "${outdir}/iTunesArtwork@2x.png"
-            cp -vf "/tmp/${TMP_FILE_PREFIX}_512x512.png" "${outdir}/iTunesArtwork.png"
+            cp -f "/tmp/${TMP_FILE_PREFIX}_1024x1024.png" "${outdir}/iTunesArtwork@2x.png"
+            cp -f "/tmp/${TMP_FILE_PREFIX}_512x512.png" "${outdir}/iTunesArtwork.png"
         else
             echo "Image is not PNG file.\n"
             exit 1
@@ -95,10 +89,35 @@ if [ $JOB_COND = 'OK' ]; then
             echo "Already exist ${TMP_FILE_PREFIX}_${res}x${res}.png."
         else
             sips -Z $res "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_${res}x${res}.png
-            cp -vf "/tmp/${TMP_FILE_PREFIX}_${res}x${res}.png" "${outdir}/Icon${nameofpart}.png"
+            cp -f "/tmp/${TMP_FILE_PREFIX}_${res}x${res}.png" "${outdir}/Icon${nameofpart}.png"
         fi
     done
 
     # Delete temporary files
-    rm -v /tmp/${TMP_FILE_PREFIX}_*
+    rm /tmp/${TMP_FILE_PREFIX}_*
+}
+
+# Check sips version
+if [ ${VER} != ${REQVER} ]; then
+	echo "sips version is ${ver}. requier ${REQVER}."
+	exit 1
+fi
+
+# Check argument
+if [ $# -eq 1 ]; then
+	# Image file name
+	BASE_FILE=$1
+    
+	if [ -e ${BASE_FILE} ]; then
+        echo "OK. File exists."
+		create_app_icons
+    else
+        echo "File not exists."
+		exit 1
+	fi
+else
+    echo "Argument error."
+    echo "Usage: sh /path/to/this_script image_file.png"
+    echo "Please do not use space for file name."
+    exit 1
 fi

@@ -33,20 +33,21 @@ sips version 10.4.4
 
 ## Usage
 
-```
-$ sh create_ios_icons.sh image_file.png
+```shell
+$ sh /path/to/create_ios_icons.sh image_file.png
 ```
 
 ## Plan
 
 - 変換後のファイルを任意の場所へ保存できるようにしたい。
-- ファイル名に汎用性をもたせたい。
+- ファイル名に汎用性をもたせたい。(2byte 文字とか記号とか)
 - 画像形式の種類を増やしたい。
 - 対話形式で元画像をクロップできるようにしたい。
 
 ## License
 
-[MIT](https://opensource.org/licenses/MIT)
+Copyright (c) 2015 Tomokatsu Kumata
+This software is released under the MIT License, Please see [MIT](https://opensource.org/licenses/MIT)
 
 ## Author
 
