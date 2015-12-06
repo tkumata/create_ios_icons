@@ -30,51 +30,15 @@ TMP_FILE_PREFIX="kmt_xcode_icons" # Prefix temporary file
 
 create_app_icons()
 {
-    # Input width and height and image format into $a
-    imginfo=`sips -g all "${BASE_FILE}" | sed -n '/format: /p;/pixelHeight: /p;/pixelWidth: /p' | cut -d':' -f2`
-    END=0
-    
-    for v in $imginfo
-    do
-        if [ $END -eq 0 ]; then
-            iw=$v
-        elif [ $END -eq 1 ]; then
-            ih=$v
-        elif [ $END -eq 2 ]; then
-            f=$v
-        fi
-        END=`expr $END + 1`
-    done
+    # create output directory
+    OUTDIR="create_ios_icons"
+    mkdir -p ${OUTDIR} 2>/dev/null
 
-    # Check long side
-    if [ $iw -gt $ih ]; then
-        s=$iw
-    else
-        s=$ih
-    fi
-
-    echo "Long side: $s"
-    echo "Format: $f"
-    
-    if [ $s -gt 1023 ]; then
-        if [ $f = "png" ]; then
-            # create output directory
-            outdir="create_ios_icons"
-            mkdir -p ${outdir} 2>/dev/null
-
-            # create parent file
-            sips -Z 1024 "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_1024x1024.png
-            sips -Z 512 "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_512x512.png
-            cp -f "/tmp/${TMP_FILE_PREFIX}_1024x1024.png" "${outdir}/iTunesArtwork@2x.png"
-            cp -f "/tmp/${TMP_FILE_PREFIX}_512x512.png" "${outdir}/iTunesArtwork.png"
-        else
-            echo "Image is not PNG file.\n"
-            exit 1
-        fi
-    else
-        echo "Long side is ${s}px.\nImage resolution is not enough. So please ready 1024px picture."
-        exit 1
-    fi
+    # create parent file
+    sips -Z 1024 "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_1024x1024.png
+    sips -Z 512 "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_512x512.png
+    cp -f "/tmp/${TMP_FILE_PREFIX}_1024x1024.png" "${OUTDIR}/iTunesArtwork@2x.png"
+    cp -f "/tmp/${TMP_FILE_PREFIX}_512x512.png" "${OUTDIR}/iTunesArtwork.png"
 
     # Icon Resolution
     resolutions="180/-60@3x 152/-76@2x 144/-72@2x 120/-60@2x 114/@2x 100/-Small-50@2x 87/-Small@3x 80/-Small-40@2x 76/-76 72/-72 57/ 58/-Small@2x 50/-Small-50 40/-Small-40 29/-Small"
@@ -82,14 +46,14 @@ create_app_icons()
     # Create App icons
     for a in ${resolutions}
     do
-        res=`echo ${a} | cut -d'/' -f1`
+        RES=`echo ${a} | cut -d'/' -f1`
         nameofpart=`echo ${a} | cut -d'/' -f2`
         
-        if [ -e "/tmp/${TMP_FILE_PREFIX}_${res}x${res}.png" ]; then
-            echo "Already exist ${TMP_FILE_PREFIX}_${res}x${res}.png."
+        if [ -e "/tmp/${TMP_FILE_PREFIX}_${RES}x${RES}.png" ]; then
+            echo "Already exist ${TMP_FILE_PREFIX}_${RES}x${RES}.png."
         else
-            sips -Z $res "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_${res}x${res}.png
-            cp -f "/tmp/${TMP_FILE_PREFIX}_${res}x${res}.png" "${outdir}/Icon${nameofpart}.png"
+            sips -Z $RES "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_${RES}x${RES}.png
+            cp -f "/tmp/${TMP_FILE_PREFIX}_${RES}x${RES}.png" "${OUTDIR}/Icon${nameofpart}.png"
         fi
     done
 
@@ -99,18 +63,68 @@ create_app_icons()
 
 # Check sips version
 if [ ${VER} != ${REQVER} ]; then
-	echo "sips version is ${ver}. requier ${REQVER}."
+	echo "sips version is ${VER}. requier ${REQVER}."
 	exit 1
 fi
 
 # Check argument
 if [ $# -eq 1 ]; then
 	# Image file name
-	BASE_FILE=$1
+	BASE_FILE=$1    
     
 	if [ -e ${BASE_FILE} ]; then
         echo "OK. File exists."
-		create_app_icons
+        
+        # Input width and height and image format into $a
+        imginfo=`sips -g all "${BASE_FILE}" | sed -n '/format: /p;/pixelHeight: /p;/pixelWidth: /p' | cut -d':' -f2`
+        END=0
+
+        for v in $imginfo
+        do
+            if [ $END -eq 0 ]; then
+                # Get width
+                iw=$v
+            elif [ $END -eq 1 ]; then
+                # Get height
+                ih=$v
+            elif [ $END -eq 2 ]; then
+                # Get image format
+                FORMAT=$v
+            fi
+            END=`expr $END + 1`
+        done
+
+        # Check length
+        if [ $iw -gt $ih ]; then
+            LONG=$iw
+            SHORT=$ih
+        elif [ $iw -lt $ih ]; then
+            LONG=$ih
+            SHORT=$iw
+        else
+            LONG=$ih
+            SHORT=${LONG}
+        fi
+
+        if [ ${LONG} -lt 1024 ]; then
+            echo "Long side is ${LONG}px.\nImage resolution is not enough. So please ready 1024px picture."
+            exit 1
+        else
+            echo "====="
+            echo "Do you crop and duplicate this image? [y/n]"
+            read CROP_ANSWER
+        
+            if [ ${CROP_ANSWER} = 'y' ]; then
+                sips -c ${SHORT} ${SHORT} "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_${BASE_FILE}
+                BASE_FILE="/tmp/${TMP_FILE_PREFIX}_${BASE_FILE}"
+            fi
+
+            echo "Long side: ${LONG}px"
+            echo "Short side: ${SHORT}px"
+            echo "Format: ${FORMAT}"
+        
+    		create_app_icons
+        fi
     else
         echo "File not exists."
 		exit 1

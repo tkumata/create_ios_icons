@@ -41,12 +41,14 @@ $ sh /path/to/create_ios_icons.sh image_file.png
 
 - 変換後のファイルを任意の場所へ保存できるようにしたい。
 - ファイル名に汎用性をもたせたい。(2byte 文字とか記号とか)
-- 画像形式の種類を増やしたい。
-- 対話形式で元画像をクロップできるようにしたい。
+- ~~画像形式の種類を増やしたい。~~(sips 任せに変更)
+- ~~対話形式で元画像をクロップできるようにしたい。~~
+- クロップ時、柔軟性をもたせたい。
 
 ## License
 
 Copyright (c) 2015 Tomokatsu Kumata
+
 This software is released under the MIT License, Please see [MIT](https://opensource.org/licenses/MIT)
 
 ## Author
