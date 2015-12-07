@@ -27,11 +27,12 @@
 REQVER="10.4.4"
 VER=`sips -h | head -1 | awk '{print $2}'`
 TMP_FILE_PREFIX="kmt_xcode_icons" # Prefix temporary file
+DATETIME=`date "+%y%m%d%H%M%S"`
 
 create_app_icons()
 {
     # create output directory
-    OUTDIR="create_ios_icons"
+    OUTDIR="create_ios_icons-${DATETIME}"
     mkdir -p ${OUTDIR} 2>/dev/null
 
     # create parent file
