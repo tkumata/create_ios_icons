@@ -60,11 +60,14 @@ create_app_icons()
 
     # Delete temporary files
     rm /tmp/${TMP_FILE_PREFIX}_*
+    
+    echo "Complete."
 }
 
 # Check sips version
 if [ ${VER} != ${REQVER} ]; then
 	echo "sips version is ${VER}. requier ${REQVER}."
+    echo
 	exit 1
 fi
 
@@ -75,6 +78,7 @@ if [ $# -eq 1 ]; then
     
 	if [ -e ${BASE_FILE} ]; then
         echo "OK. File exists."
+        echo
         
         # Input width and height and image format into $a
         IMG_INFO=`sips -g all "${BASE_FILE}" | sed -n '/format: /p;/pixelHeight: /p;/pixelWidth: /p' | cut -d':' -f2`
@@ -110,15 +114,23 @@ if [ $# -eq 1 ]; then
         echo "Long side: ${LONG}px"
         echo "Short side: ${SHORT}px"
         echo "Format: ${FORMAT}"
+        echo
         
         if [ ${LONG} -lt 1024 ]; then
             echo "Long side is ${LONG}px.\nImage resolution is not enough. So please ready 1024px picture."
+            echo
             exit 1
         else
-            echo "Do you crop and duplicate this image? [y/n]"
+            echo "Do you crop and duplicate this image? [1/2/3]"
+            echo " 1) Crop image by long length"
+            echo " 2) Crop image by short length"
+            echo " 3) No crop"
             read CROP_ANSWER
-        
-            if [ ${CROP_ANSWER} = 'y' ]; then
+            
+            if [ ${CROP_ANSWER} -eq 1 ]; then
+                sips -c ${LONG} ${LONG} "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_${BASE_FILE}
+                BASE_FILE="/tmp/${TMP_FILE_PREFIX}_${BASE_FILE}"
+            elif [ ${CROP_ANSWER} -eq 2 ]; then
                 sips -c ${SHORT} ${SHORT} "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_${BASE_FILE}
                 BASE_FILE="/tmp/${TMP_FILE_PREFIX}_${BASE_FILE}"
             fi
@@ -127,11 +139,13 @@ if [ $# -eq 1 ]; then
         fi
     else
         echo "File not exists."
+        echo
 		exit 1
 	fi
 else
     echo "Argument error."
-    echo "Usage: sh /path/to/this_script image_file.png"
+    echo "Usage: sh /path/to/this_script image_file"
     echo "Please do not use space for file name."
+    echo
     exit 1
 fi
