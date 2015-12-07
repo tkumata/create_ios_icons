@@ -76,10 +76,10 @@ if [ $# -eq 1 ]; then
         echo "OK. File exists."
         
         # Input width and height and image format into $a
-        imginfo=`sips -g all "${BASE_FILE}" | sed -n '/format: /p;/pixelHeight: /p;/pixelWidth: /p' | cut -d':' -f2`
+        IMG_INFO=`sips -g all "${BASE_FILE}" | sed -n '/format: /p;/pixelHeight: /p;/pixelWidth: /p' | cut -d':' -f2`
         END=0
 
-        for v in $imginfo
+        for v in $IMG_INFO
         do
             if [ $END -eq 0 ]; then
                 # Get width
@@ -106,11 +106,14 @@ if [ $# -eq 1 ]; then
             SHORT=${LONG}
         fi
 
+        echo "Long side: ${LONG}px"
+        echo "Short side: ${SHORT}px"
+        echo "Format: ${FORMAT}"
+        
         if [ ${LONG} -lt 1024 ]; then
             echo "Long side is ${LONG}px.\nImage resolution is not enough. So please ready 1024px picture."
             exit 1
         else
-            echo "====="
             echo "Do you crop and duplicate this image? [y/n]"
             read CROP_ANSWER
         
@@ -119,10 +122,6 @@ if [ $# -eq 1 ]; then
                 BASE_FILE="/tmp/${TMP_FILE_PREFIX}_${BASE_FILE}"
             fi
 
-            echo "Long side: ${LONG}px"
-            echo "Short side: ${SHORT}px"
-            echo "Format: ${FORMAT}"
-        
     		create_app_icons
         fi
     else
