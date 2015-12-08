@@ -29,39 +29,41 @@ VER=`sips -h | head -1 | awk '{print $2}'`
 TMP_FILE_PREFIX="kmt_xcode_icons" # Prefix temporary file
 DATETIME=`date "+%y%m%d%H%M%S"`
 
-create_app_icons()
-{
+create_icons() {
     # create output directory
-    OUTDIR="create_ios_icons-${DATETIME}"
-    mkdir -p ${OUTDIR} 2>/dev/null
+    _OUTDIR="create_ios_icons-${DATETIME}"
+    mkdir -p ${_OUTDIR} 2>/dev/null # どうしようかな、ここ...
 
     # create parent file
+    # TODO: 下のブロックへ統合する
     sips -Z 1024 "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_1024x1024.png
     sips -Z 512 "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_512x512.png
-    cp -f "/tmp/${TMP_FILE_PREFIX}_1024x1024.png" "${OUTDIR}/iTunesArtwork@2x.png"
-    cp -f "/tmp/${TMP_FILE_PREFIX}_512x512.png" "${OUTDIR}/iTunesArtwork.png"
+    cp -f "/tmp/${TMP_FILE_PREFIX}_1024x1024.png" "${_OUTDIR}/iTunesArtwork@2x.png"
+    cp -f "/tmp/${TMP_FILE_PREFIX}_512x512.png" "${_OUTDIR}/iTunesArtwork.png"
 
     # Icon Resolution
-    resolutions="180/-60@3x 152/-76@2x 144/-72@2x 120/-60@2x 114/@2x 100/-Small-50@2x 87/-Small@3x 80/-Small-40@2x 76/-76 72/-72 57/ 58/-Small@2x 50/-Small-50 40/-Small-40 29/-Small"
+    _RESOLUTIONS="180/-60@3x 152/-76@2x 144/-72@2x 120/-60@2x 114/@2x 100/-Small-50@2x 87/-Small@3x 80/-Small-40@2x 76/-76 72/-72 57/ 58/-Small@2x 50/-Small-50 40/-Small-40 29/-Small"
 
     # Create App icons
-    for a in ${resolutions}
+    for _a in ${_RESOLUTIONS}
     do
-        RES=`echo ${a} | cut -d'/' -f1`
-        nameofpart=`echo ${a} | cut -d'/' -f2`
+        _RES=`echo ${_a} | cut -d'/' -f1`
+        _ICONNAME=`echo ${_a} | cut -d'/' -f2`
         
-        if [ -e "/tmp/${TMP_FILE_PREFIX}_${RES}x${RES}.png" ]; then
-            echo "Already exist ${TMP_FILE_PREFIX}_${RES}x${RES}.png."
+        if [ -e "/tmp/${TMP_FILE_PREFIX}_${_RES}x${_RES}.png" ]; then
+            echo "Already exists ${TMP_FILE_PREFIX}_${_RES}x${_RES}.png."
         else
-            sips -Z $RES "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_${RES}x${RES}.png
-            cp -f "/tmp/${TMP_FILE_PREFIX}_${RES}x${RES}.png" "${OUTDIR}/Icon${nameofpart}.png"
+            sips -Z $_RES "${BASE_FILE}" --out /tmp/${TMP_FILE_PREFIX}_${_RES}x${_RES}.png
         fi
+        
+        cp -f "/tmp/${TMP_FILE_PREFIX}_${_RES}x${_RES}.png" "${_OUTDIR}/Icon${_ICONNAME}.png"
     done
 
     # Delete temporary files
     rm /tmp/${TMP_FILE_PREFIX}_*
     
     echo "Complete."
+    echo
 }
 
 # Check sips version
@@ -84,7 +86,7 @@ if [ $# -eq 1 ]; then
         IMG_INFO=`sips -g all "${BASE_FILE}" | sed -n '/format: /p;/pixelHeight: /p;/pixelWidth: /p' | cut -d':' -f2`
         END=0
 
-        for v in $IMG_INFO
+        for v in ${IMG_INFO}
         do
             if [ $END -eq 0 ]; then
                 # Get width
@@ -135,7 +137,7 @@ if [ $# -eq 1 ]; then
                 BASE_FILE="/tmp/${TMP_FILE_PREFIX}_${BASE_FILE}"
             fi
 
-    		create_app_icons
+    		create_icons
         fi
     else
         echo "File not exists."
@@ -144,8 +146,8 @@ if [ $# -eq 1 ]; then
 	fi
 else
     echo "Argument error."
-    echo "Usage: sh /path/to/this_script image_file"
-    echo "Please do not use space for file name."
+    echo "Usage: sh /path/to/this_script /path/to/image_file"
+    echo "Please do NOT use space for file name."
     echo
     exit 1
 fi
