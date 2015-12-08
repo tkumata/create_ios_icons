@@ -69,9 +69,10 @@ Do you crop and duplicate this image? [1/2/3]
 Complete.
 
 $ ls create_ios_icons-151208143634
-Icon-60@2x.png       Icon-72@2x.png       Icon-Small-40.png    Icon-Small-50@2x.png Icon-Small@3x.png    iTunesArtwork.png
-Icon-60@3x.png       Icon-76.png          Icon-Small-40@2x.png Icon-Small.png       Icon.png             iTunesArtwork@2x.png
-Icon-72.png          Icon-76@2x.png       Icon-Small-50.png    Icon-Small@2x.png    Icon@2x.png
+Icon-60@2x.png       Icon-72@2x.png       Icon-Small-40.png    Icon-Small-50@2x.png Icon-Small@3x.png
+iTunesArtwork.png    Icon-60@3x.png       Icon-76.png          Icon-Small-40@2x.png Icon-Small.png
+Icon.png             iTunesArtwork@2x.png Icon-72.png          Icon-76@2x.png       Icon-Small-50.png
+Icon-Small@2x.png    Icon@2x.png
 ```
 
 ## Plan
